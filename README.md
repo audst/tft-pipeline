@@ -1,6 +1,6 @@
 # TFT Pipeline
 
-![CI](https://github.com/<you>/tft-pipeline/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/audst/tft-pipeline/actions/workflows/ci.yml/badge.svg)
 
 A data pipeline for Teamfight Tactics (TFT) that ingests high-elo match data from the Riot API, transforms it into partitioned Parquet tables, and uses it to model placements and compute average placement (AVP) by composition and augment.
 
