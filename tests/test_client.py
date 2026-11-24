@@ -8,11 +8,24 @@ from tft_pipeline.ratelimit import RateLimiter
 
 
 def make_client(handler):
-    async def no_sleep(_):
+    async def no_sleep(_seconds):
         pass
 
-    return RiotClient(Config(api_key="k"), RateLimiter([(1000, 1)]),
-                      transport=httpx.MockTransport(handler), sleep=no_sleep)
+    return RiotClient(
+        Config(api_key="k"),
+        RateLimiter([(1000, 1)]),
+        transport=httpx.MockTransport(handler),
+        sleep=no_sleep,
+    )
+
+async def test_success_returns_entries():
+    def handler(request):
+        return httpx.Response(200, json={"entries": [{"puuid": "a"}]})
+
+    async with make_client(handler) as client:
+        result = await client.league_entries("challenger")
+
+    assert result == [{"puuid": "a"}]
 
 
 async def test_retries_429_then_succeeds():
