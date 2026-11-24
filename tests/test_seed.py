@@ -14,9 +14,18 @@ def make(data):
 
 
 DATA = {
-    "challenger": [{"puuid": "a"}, {"puuid": "b"}],
-    "grandmaster": [{"puuid": "b"}, {"puuid": "c"}],
-    "master": [{"puuid": "d"}],
+    "challenger": [
+        {"puuid": "a", "inactive": False},
+        {"puuid": "b", "inactive": False},
+    ],
+    "grandmaster": [
+        {"puuid": "b", "inactive": False},
+        {"puuid": "c", "inactive": False},
+    ],
+    "master": [
+        {"puuid": "d", "inactive": False},
+        {"puuid": "e", "inactive": True},
+    ],
 }
 
 
@@ -34,3 +43,7 @@ async def test_same_seed_gives_same_sample():
     first = await seed_puuids(make(DATA), cap=2, rng_seed=1)
     second = await seed_puuids(make(DATA), cap=2, rng_seed=1)
     assert first == second
+
+async def test_inactive_players_are_skipped():
+    result = await seed_puuids(make(DATA), cap=100)
+    assert "e" not in result

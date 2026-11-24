@@ -7,6 +7,8 @@ async def seed_puuids(client, cap: int, rng_seed: int = 42) -> list[str]:
     puuids = set()
     for tier in TIERS:
         for entry in await client.league_entries(tier):
+            if entry["inactive"]:
+                continue
             puuids.add(entry["puuid"])
 
     ordered = sorted(puuids)
