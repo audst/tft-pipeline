@@ -19,17 +19,21 @@ comps affect average placement, and which augments and items actually move
 results. The pipeline is the engineering half; the questions come from the
 climb!
 
+## What works as of today
+
+- Seeds players from the Challenger, Grandmaster, and Master leagues, skipping inactive accounts
+- Async Riot client with a custom rate limiter, jittered retries, and clear handling of expired keys
+- Match ID collection with deduplication across players
+- Idempotent, crash-safe raw storage: reruns skip matches already on disk
+- Unit tests (fake clock, mocked HTTP) and CI on every push
+
 ## Architecture
 
 ```
-Riot API → async ingester → raw JSON (bronze) → Spark job → Parquet (silver)
-        → DuckDB gold tables → LightGBM + AVP aggregates
-                 orchestrated by Airflow, run in Docker, tested in GitHub Actions
+Riot API → async client + rate limiter → raw JSON (bronze)
+        → Spark flattening → Parquet (silver)   [planned]
+        → gold tables + model                    [planned]
 ```
-
-- **Bronze:** raw match JSON, stored untouched
-- **Silver:** flattened tables (`matches`, `participants`, `participant_traits`, `participant_units`, `participant_augments`), partitioned by patch
-- **Gold:** model-ready features and aggregated AVP tables
 
 ## Features
 
@@ -50,6 +54,7 @@ cd tft-pipeline
 cp .env.example .env        # then add your RIOT_API_KEY
 uv sync
 uv run pytest
+uv run python -m tft_pipeline.pipeline
 ```
 
 ## Project structure
@@ -65,15 +70,18 @@ docs/               # diagrams and design notes
 
 ## Status
 
-- [x] Repo, uv, and CI setup
-- [ ] Rate limiter and async Riot client
-- [ ] Seed players and fetch match IDs
-- [ ] Raw JSON storage (idempotent)
+- [x] Repo, uv, and CI
+- [x] Rate limiter with tests
+- [x] Async Riot client with retries and tests
+- [x] Seeding and match ID collection
+- [x] Idempotent raw storage
+- [x] First end-to-end run against the live API
+- [ ] Large download run
 - [ ] Spark flattening to Parquet
-- [ ] Airflow DAG and Docker Compose
+- [ ] Data quality checks
+- [ ] Orchestration and Docker
 - [ ] Gold tables and AVP analysis
-- [ ] LightGBM placement model
-- [ ] Final write-up and results
+- [ ] Placement model
 
 ## Design notes and limitations
 
