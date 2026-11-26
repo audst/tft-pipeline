@@ -60,7 +60,15 @@ class RiotClient:
                 delay = self._backoff(attempt)
             else:
                 resp.raise_for_status()  # other 4xx means a bug in our request
-            log.warning("status %d on %s (attempt %d), waiting %.1fs", status, url, attempt + 1, delay)
+            log.warning(
+                "status %d on %s (attempt %d), waiting %.1fs | type=%s method-limit=%s method-count=%s app-limit=%s app-count=%s",
+                status, url, attempt + 1, delay,
+                resp.headers.get("X-Rate-Limit-Type"),
+                resp.headers.get("X-Method-Rate-Limit"),
+                resp.headers.get("X-Method-Rate-Limit-Count"),
+                resp.headers.get("X-App-Rate-Limit"),
+                resp.headers.get("X-App-Rate-Limit-Count")
+            )   
             await self._sleep(delay)
         raise RuntimeError(f"gave up on {url} after {self._max_retries} attempts")
 

@@ -21,7 +21,7 @@ async def run(players: int, per_player: int, max_matches: int, days: int, rng_se
     root.mkdir(parents=True, exist_ok=True)
 
     # build rate limiter
-    limiter = RateLimiter([(100, 120), (20, 1)])
+    limiter = RateLimiter([(90, 120), (15, 1)])
     
     async with RiotClient(cfg, limiter) as client:
         puuids = await seed_puuids(client, cap=players, rng_seed=rng_seed)
