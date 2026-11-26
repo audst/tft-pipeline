@@ -51,6 +51,11 @@ Format is `max:window_seconds`, comma-separated. Order is not guaranteed, so par
 - Estimated time: 250 players is about 5 min of match-ID calls; 10k matches is about 3+ hours
 - Possible future improvement: read the count headers after each response and adapt
 
+## Raw Storage
+- Files are stored as raw/{platform}/{match_id}.json, not by patch, because the patch is only known after downloading the match
+- Writes are atomic (temp file, then rename)
+- Restarting skips existing files, so that no requests are wasted
+
 ## Errors
 
 | Status | Cause | Behavior |

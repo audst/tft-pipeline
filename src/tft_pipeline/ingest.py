@@ -1,5 +1,7 @@
 import asyncio
+import json
 import logging
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
@@ -14,3 +16,17 @@ async def collect_match_ids(client, puuids, per_player, start_time) -> set[str]:
         total, len(unique), total - len(unique),
     )
     return unique
+
+async def fetch_one(client, match_id: str, root: Path) -> str:
+    path = root / f"{match_id}.json"
+    if path.exists():
+        return "skipped"
+
+    match = await client.match(match_id)
+    if match is None:
+        return "missing"
+
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(match))
+    tmp.replace(path)
+    return "fetched"
