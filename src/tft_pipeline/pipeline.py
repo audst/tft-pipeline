@@ -1,8 +1,8 @@
 import asyncio
 import collections
 import logging
-from pathlib import Path
 import time
+from pathlib import Path
 
 from .client import RiotClient
 from .config import Config
