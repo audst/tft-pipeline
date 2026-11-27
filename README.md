@@ -49,7 +49,7 @@ Riot API → async client + rate limiter → raw JSON (bronze)
 Requires [uv](https://docs.astral.sh/uv/) and a Riot API key from the [Riot developer portal](https://developer.riotgames.com/). Dev keys expire every 24 hours.
 
 ```bash
-git clone git@github.com:<you>/tft-pipeline.git
+git clone https://github.com/audst/tft-pipeline.git
 cd tft-pipeline
 cp .env.example .env        # then add your RIOT_API_KEY
 uv sync
